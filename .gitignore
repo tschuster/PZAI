@@ -17,3 +17,5 @@ pickle-email-*.html
 /.ruby-gemset
 /.ruby-version
 /config/database.yml
+/config/settings.rb
+/.DS_Store
