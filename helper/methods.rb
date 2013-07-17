@@ -17,25 +17,25 @@ def draw_screen(type, values)
   end
   puts
   puts
-  line = "##"
-  team_member_count.times do
-    line << "#"*13
+  line = "┏━"
+  team_member_count.times do |i|
+    line << "━"*10
+    line << (i+1 < team_member_count ? "━┳━" : "━┓")
   end
-  line << "##"
+
   puts line
-  line = "| #{values[:nickname].ljust(11)} | "
-  line << values[:team_hp].map {|member, hp| "#{member.ljust(11)} " }.join("| ")
-  line << " |"
+  line = "┃ #{values[:nickname].ljust(10)} ┃ "
+  line << values[:team_hp].map {|member, hp| "#{member.ljust(10)} " }.join("┃ ")
+  line << "┃"
   puts line
-  line = "| HP: #{values[:hp].to_s.rjust(7)} | "
-  line << values[:team_hp].map {|member, hp| "HP: #{hp.to_s.rjust(7)} " }.join("| ")
-  line << " |"
+  line = "┃ HP: #{values[:hp].to_s.rjust(6)} ┃ "
+  line << values[:team_hp].map {|member, hp| "HP: #{hp.to_s.rjust(6)} " }.join("┃ ") << "┃"
   puts line
-  line = "##"
-  team_member_count.times do
-    line << "#"*13
+  line = "┗━"
+  team_member_count.times do |i|
+    line << "━"*10
+    line << (i+1 < team_member_count ? "━┻━" : "━┛")
   end
-  line << "##"
   puts line
   puts 
   puts values[:message][:enemies]
