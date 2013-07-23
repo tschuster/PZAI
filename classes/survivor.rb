@@ -1,6 +1,8 @@
-class Survivor < BasicObject
-  def initialize(values)
+class Survivor
+  require File.expand_path('../../helper/methods', __FILE__)
+  def initialize(values, env)
     @hp = values[:hp].to_i
+    @env = env
   end
 
   def hp
@@ -11,7 +13,11 @@ class Survivor < BasicObject
     @hp = values[:hp]
   end
 
-  def handle_zombies(message, host, i_am_leader, other_players)
+  def update_env(env)
+    @env = env
+  end
+
+  def handle_zombies(message)
     message_from_other_players = nil
 
     # sort zombies by remaining hp and attack weakes enemy
@@ -22,12 +28,12 @@ class Survivor < BasicObject
       zombie_id = id
       break if hp == weakest_hp
     end
-    if i_am_leader
-      host.send_to(other_players, {message: "attack_zombie", id: zombie_id})
+    if !!@env[:i_am_leader]
+      @env[:host].send_to(other_players, {message: "attack_zombie", id: zombie_id})
     else
       waiter = 0
       while message_from_other_players.blank? && waiter < 3
-        message_from_other_players = host.receive!
+        message_from_other_players = @env[:host].receive!
         waiter += 1
         break if waiter >= 3 || message_from_other_players.present?
         sleep(1)
@@ -37,12 +43,12 @@ class Survivor < BasicObject
       log("message from other players:")
       if message_from_other_players[:response] == "talk"
         log("attacking zombie #{message_from_other_players[:data][:id]} as told")
-        host.send(request: "attack", id: message_from_other_players[:data][:id]) if message_from_other_players[:data][:message] == "attack_zombie"
+        @env[:host].send(request: "attack", id: message_from_other_players[:data][:id]) if message_from_other_players[:data][:message] == "attack_zombie"
       end
       log(message_from_other_players)
     else
       log("attacking zombie #{zombie_id}")
-      host.send(request: "attack", id: zombie_id)
+      @env[:host].send(request: "attack", id: zombie_id)
     end
   end
 

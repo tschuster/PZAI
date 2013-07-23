@@ -3,6 +3,21 @@ def fail(message)
   super(message)
 end
 
+def draw_game(message)
+  system "tput clear"
+  draw_upper_border
+  lines = 1
+  draw_with_border
+  lines += 1
+  draw_centered "Wave #{@env[:wave_counter]}"
+  lines += 1
+  while lines <= 28 do
+    draw_with_border
+    lines += 1
+  end
+  draw_lower_border
+end
+
 def draw_screen(type)
   
   case type.to_s
@@ -84,7 +99,7 @@ def draw_start_screen!(message="")
   draw_lower_border
 end
 
-def draw_lobby!(message = nil)
+def draw_lobby!(message = "")
   system "tput clear"
   draw_upper_border
   lines = 1
@@ -94,7 +109,7 @@ def draw_lobby!(message = nil)
   end
   draw_centered("Game Lobby")
   lines += 1
-  if player_entered.present?
+  if @env[:player_entered].present?
     2.times do
       draw_line
       lines += 1
@@ -119,11 +134,11 @@ def draw_lobby!(message = nil)
   lines += 1
   draw_with_border(("┃" << " #{@env[:nickname]}".ljust(40) << "Ready ").rjust(80))
   lines += 1
-  (@env[:current_players] - [@env[:nickname]]).each do |nickname|
+  (@env[:current_players].keys - [@env[:nickname]]).each do |nickname|
     draw_with_border(("┃" << " #{nickname}".ljust(38) << "Waiting ").rjust(80))
     lines += 1
   end
-  (@env[:min_players]-@env[:current_players].count-1).times do
+  (@env[:min_players]-@env[:current_players].count).times do
     draw_with_border(("┃" << " "*(46)).rjust(80))
     lines += 1
   end
@@ -154,6 +169,6 @@ def draw_line
   puts "┃" << " "*80 << "┃"
 end
 
-def draw_centered(message)
+def draw_centered(message="")
   puts "┃" << (" "*(40-message.length/2) << message).ljust(80) << "┃"
 end

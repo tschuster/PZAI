@@ -17,3 +17,7 @@ end
 def game_started?
   @env[:game_started]
 end
+
+def other_players
+  @env[:current_players].keys - [@env[:nickname]]
+end

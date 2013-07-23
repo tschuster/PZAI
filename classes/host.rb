@@ -24,7 +24,7 @@ class Host < BasicObject
     begin
       send({nickname: @nickname, request: "exit"})
     ensure
-      @socket.close if @socket.open?
+      @socket.close if @socket.present? && @socket.open?
     end
   end
 
@@ -45,7 +45,7 @@ class Host < BasicObject
   end
 
   def receive!(timeout=nil)
-    return false unless @socket.open?
+    return false unless @socket.present? && @socket.open?
     begin
       ready = ::IO.select([@socket], nil, nil, timeout || 60)
       if ready
